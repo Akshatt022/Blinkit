@@ -1,0 +1,194 @@
+<%- include('./partials/header'); %>
+
+<style>
+  .swiper-container {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+  }
+</style>
+
+<body class="bg-[#f7f8fa] text-gray-800 font-sans antialiased">
+  <!-- NAVBAR -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-3">
+    
+    <!-- Logo -->
+    <div class="flex items-center space-x-2">
+      <img src="https://assets.nextleap.app/image/eyJidWNrZXQiOiJuZXh0bGVhcC1zdGF0aWMtYXNzZXRzIiwia2V5IjoiaW1hZ2VzL0JsaW5raXQtN2U4YjUyZjMtY2I5Ni00OGE4LWExMGItNDA1Y2VhNTJiMWQxLnBuZyIsImVkaXRzIjp7InJlc2l6ZSI6eyJ3aWR0aCI6NTkwLjYyNSwiaGVpZ2h0IjoyNDEuNSwiZml0IjoiY292ZXIiLCJ3aXRob3V0RW5sYXJnZW1lbnQiOnRydWV9LCJyb3RhdGUiOm51bGx9fQ==" alt="Blinkit Logo" class="h-8 w-auto">
+
+    </div>
+
+    <!-- Location (optional dropdown) -->
+    <div class="hidden md:flex items-center text-sm text-gray-600 space-x-1">
+      <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path d="..."/></svg>
+      <span>Deliver to</span>
+      <a href="" class="text-green-600 font-medium hover:underline">Your Location</a>
+    </div>
+
+    <!-- Search -->
+    <div class="flex-1 mx-4">
+      <input
+        type="text"
+        placeholder="Search for fruits, snacks, and more"
+        class="w-full px-4 py-2 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+      />
+    </div>
+
+    <!-- Cart / Account -->
+    <div class="flex items-center space-x-4">
+      <a href="/cart" class="relative group">
+        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M3 3h2l.4 2M7 13h14l-1.35 6.74a2 2 0 01-1.97 1.51H8.32a2 2 0 01-1.98-1.75L4 4H2" />
+        </svg>
+        <span class="absolute -top-1 -right-2 text-xs bg-green-600 text-white px-1 rounded-full"><%= cartCount %></span>
+      </a>
+      <a href="/users/logout" class="text-sm text-gray-700 hover:text-green-600">Logout</a>
+    </div>
+  </div>
+</header>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
+    <!-- ORDER NOW -->
+    <section class="bg-white rounded-3xl p-6 shadow mb-10">
+      <div class="flex justify-between items-center mb-5">
+        <h2 class="text-2xl font-semibold text-gray-900">Order Now</h2>
+        <button class="text-green-600 hover:underline text-sm font-medium">See all</button>
+      </div>
+      <div class="flex space-x-5 overflow-x-auto scrollbar-hide">
+        <% rnproducts.forEach(elem => { %>
+          <div class="w-36 flex-shrink-0 bg-white rounded-2xl shadow hover:shadow-lg transition-all duration-200 p-3">
+            <div class="h-28 w-full rounded-xl overflow-hidden bg-gray-100">
+              <img src="data:image/jpg;base64,<%= elem.image.toString('base64') %>" alt="<%= elem.name %>" class="h-full w-full object-cover">
+            </div>
+            <p class="mt-3 text-sm font-medium text-center"><%= elem.name %></p>
+            <p class="text-xs text-gray-400 text-center line-through">₹<%= Number(elem.price) + 20 %></p>
+            <p class="text-center font-bold text-sm text-gray-900">₹<%= elem.price %></p>
+            <a href="/cart/add/<%= elem._id %>" class="block mt-2 bg-green-600 hover:bg-green-700 text-white text-xs py-1.5 rounded-md text-center transition">ADD</a>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+
+    <!-- OFFERS -->
+      <section class="mb-14 ">
+        <div class="swiper-container w-full max-w-7xl mx-auto px-2 overflow-hidden ">
+          <div class="swiper-wrapper flex gap-x-2">
+
+            <!-- Slide 1 -->
+            <div class="swiper-slide">
+              <a href="#" class="h-56 sm:h-64 md:h-72 lg:h-80 rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105">
+                <img
+                  src="https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,w=720/layout-engine/2023-07/pharmacy-WEB.jpg"
+                  alt="Pharmacy Offer"
+                  class="w-full h-full object-cover"
+                />
+              </a>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="swiper-slide">
+              <a href="#" class="block h-56 sm:h-64 md:h-72 lg:h-80 rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105">
+                <img
+                  src="https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,w=720/layout-engine/2023-07/Pet-Care_WEB.jpg"
+                  alt="Pet Care Offer"
+                  class="w-full h-full object-cover"
+                />
+              </a>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="swiper-slide">
+              <a href="#" class="block h-56 sm:h-64 md:h-72 lg:h-80 rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105">
+                <img
+                  src="https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,w=720/layout-engine/2023-07/Pet-Care_WEB.jpg"
+                  alt="Pet Care Again"
+                  class="w-full h-full object-cover"
+                />
+              </a>
+            </div>
+
+            <!-- Slide 4 -->
+            <div class="swiper-slide">
+              <a href="#" class="block h-56 sm:h-64 md:h-72 lg:h-80 rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105">
+                <img
+                  src="https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,w=720/layout-engine/2023-07/Pet-Care_WEB.jpg"
+                  alt="Final Slide"
+                  class="w-full h-full object-cover"
+                />
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    <!-- PRODUCT CATEGORIES -->
+    <% for(let key in products){ %>
+      <section class="bg-white p-6 rounded-3xl shadow mb-12">
+        <div class="flex items-center justify-between mb-5 border-b pb-2">
+          <h2 class="text-xl font-semibold text-gray-900"><%= key %></h2>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+          <% products[key].forEach(elem => { %>
+            <div class="bg-white p-3 rounded-xl shadow hover:shadow-lg transition-all duration-200 text-center">
+              <img src="data:image/jpg;base64,<%= elem.image.toString('base64') %>" alt="<%= elem.name %>" class="w-24 h-24 object-cover mx-auto rounded">
+              <p class="mt-2 text-sm font-medium"><%= elem.name %></p>
+              <p class="font-bold text-gray-900 text-sm">₹<%= elem.price %></p>
+              <a href="/cart/add/<%= elem._id %>" class="block mt-2 bg-green-600 hover:bg-green-700 text-white text-sm py-1.5 rounded-md transition">ADD</a>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+    <% } %>
+
+    <!-- CART FOOTER -->
+    <% if(somethingInCart){ %>
+      <div class="py-20"></div>
+      <div class="fixed bottom-0 inset-x-0 bg-white px-5 py-4 border-t shadow-xl rounded-t-2xl z-50">
+        <div class="flex justify-between items-center mb-3">
+          <div>
+            <p class="text-sm font-medium">Get FREE delivery</p>
+            <p class="text-xs text-gray-500">Add products worth ₹236 more</p>
+          </div>
+          <button class="text-green-600 text-sm hover:underline">See all coupons</button>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-semibold"><%= cartCount %> Item</span>
+          <a href="/cart" class="bg-green-600 hover:bg-green-700 text-white px-10 py-3 rounded-xl font-medium text-sm transition">Next</a>
+        </div>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Swiper.js -->
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <script>
+    const swiper = new Swiper('.swiper-container', {
+      effect: 'slide',
+      grabCursor: true,
+      centeredSlides: true,
+      slidesPerView: 'auto',
+      loop: true,
+      autoplay: { delay: 3000, disableOnInteraction: false },
+    });
+  </script>
+
+  <!-- Scroll Position -->
+  <script>
+    window.addEventListener('scroll', () => {
+      localStorage.setItem('scrollPosition', window.scrollY);
+    });
+    window.addEventListener('load', () => {
+      const scroll = localStorage.getItem('scrollPosition');
+      if (scroll) window.scrollTo(0, scroll);
+    });
+  </script>
+</body>
+<%- include('./partials/footer'); %>

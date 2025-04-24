@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full w-full bg-gray-100">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .leaflet-top+.leaflet-right {
+            display: none;
+        }
+
+        .autocomplete-suggestions {
+            @apply absolute bg-white shadow-lg z-50 max-h-48 overflow-y-auto w-full rounded-md;
+        }
+
+        .autocomplete-suggestion {
+            @apply px-4 py-2 cursor-pointer hover:bg-gray-200;
+        }
+    </style>
+</head>
+
+<body class="h-full w-full m-0 overflow-hidden">
+
+    <!-- Header Bar -->
+    <div class="w-full h-14 bg-white shadow-md flex items-center px-4 z-10">
+        <h1 class="text-lg font-semibold text-gray-700">Select Your Delivery Location</h1>
+    </div>
+
+    <!-- Map Container -->
+    <div class="relative h-[calc(100vh-3.5rem)] w-full">
+        <!-- Search Box -->
+        <form method="post" action="/order/address/<%=orderid%>"
+            class="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white p-4 shadow-lg rounded-xl z-50 w-11/12 max-w-xl">
+            <label for="end" class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
+            <input type="text" name="address" id="end" placeholder="Enter destination"
+                class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+            <div id="suggestions" class="autocomplete-suggestions mt-2"></div>
+            <input type="submit" value="Get Order"
+                class="mt-3 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md transition duration-200" />
+        </form>
+
+        <!-- Leaflet Map -->
+        <div id="map" class="absolute inset-0 z-0"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+    <!-- The rest of your script remains unchanged -->
+    <script>
+        let startLatLng, endLatLng;
+        let userMarker;
+
+        const map = L.map('map').setView([20.5937, 78.9629], 5);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(position => {
+                startLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
+                if (userMarker) {
+                    userMarker.setLatLng(startLatLng).update();
+                } else {
+                    userMarker = L.marker(startLatLng).addTo(map)
+                        .bindPopup("You are here").openPopup();
+                }
+                map.setView(startLatLng, 13);
+            }, error => {
+                console.error("Error watching position:", error);
+            }, {
+                enableHighAccuracy: true,
+                timeout: 30000,
+                maximumAge: 0
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+
+        const endInput = document.getElementById('end');
+        const suggestionsContainer = document.getElementById('suggestions');
+        const geocoder = L.Control.Geocoder.nominatim();
+
+        endInput.addEventListener('input', function () {
+            geocoder.geocode(endInput.value, function (results) {
+                suggestionsContainer.innerHTML = '';
+                results.forEach(function (result) {
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.className = 'autocomplete-suggestion';
+                    suggestionItem.innerText = result.name;
+                    suggestionItem.addEventListener('click', function () {
+                        endInput.value = result.name;
+                        endLatLng = result.center;
+                        suggestionsContainer.innerHTML = '';
+                        generateRoute();
+                    });
+                    suggestionsContainer.appendChild(suggestionItem);
+                });
+            });
+        });
+
+        function generateRoute() {
+            if (!startLatLng || !endLatLng) {
+                alert("Please select valid locations.");
+                return;
+            }
+
+            if (window.routingControl) {
+                map.removeControl(window.routingControl);
+            }
+
+            window.routingControl = L.Routing.control({
+                waypoints: [
+                    startLatLng,
+                    endLatLng
+                ],
+                routeWhileDragging: true,
+            }).addTo(map);
+        }
+    </script>
+</body>
+
+</html>
